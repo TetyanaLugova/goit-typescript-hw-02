@@ -1,0 +1,14 @@
+.list {
+  max-width: 1400px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin: 16px auto;
+  padding: 0;
+}
+
+.item {
+  margin-bottom: 20px;
+  width: calc((100% - 48px) / 2);
+}
