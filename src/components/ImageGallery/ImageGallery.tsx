@@ -1,7 +1,12 @@
+import { Photo } from '../../types';
 import ImageCard from '../ImageCard/ImageCard';
 import css from './ImageGallery.module.css';
 
-export default function ImegeGallery({ items, openModal }) {
+interface ImageGalleryProps {
+  items: Photo[];
+  openModal: (item: Photo) => void;
+}
+const ImageGallery: React.FC<ImageGalleryProps> = ({ items, openModal }) => {
   return (
     <ul className={css.list}>
       {items.map(item => (
@@ -11,4 +16,6 @@ export default function ImegeGallery({ items, openModal }) {
       ))}
     </ul>
   );
-}
+};
+
+export default ImageGallery;

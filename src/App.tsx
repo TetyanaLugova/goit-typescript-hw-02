@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
 import SearchBar from './components/SearchBar/SearchBar';
-import { getImeges } from './components/ImegeGallery-Api';
-import ImegeGallery from './components/ImageGallery/ImageGallery';
+import { getImages } from './components/ImegeGallery-Api';
+import ImageGallery from './components/ImageGallery/ImageGallery';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import Loader from './components/Loader/Loader';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import ImageModal from './components/ImageModal/ImageModal';
+import { Photo } from './types';
+import { ApiResponse } from './types';
 
 function App() {
-  const [imeges, setImeges] = useState([]);
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState<Photo[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -25,8 +27,8 @@ function App() {
       try {
         setIsLoading(true);
         setIsError(false);
-        const data = await getImeges(searchQuery, page);
-        setImeges(prevState => [...prevState, ...data]);
+        const data: ApiResponse = await getImages(searchQuery, page);
+        setImages(prevState => [...prevState, ...data.results]);
       } catch (error) {
         setIsError(true);
       } finally {
@@ -37,16 +39,16 @@ function App() {
     fetchImages();
   }, [page, searchQuery]);
 
-  const handleSubmit = async topic => {
+  const handleSubmit = async (topic: string) => {
     setSearchQuery(topic);
     setPage(1);
-    setImeges([]);
+    setImages([]);
   };
   const handleLoadMore = async () => {
     setPage(page + 1);
   };
 
-  function openModal(image) {
+  function openModal(image: Photo) {
     setSelectedImage(image);
     setIsOpen(true);
   }
@@ -60,11 +62,11 @@ function App() {
     <>
       <SearchBar onSubmit={handleSubmit} />
       {isError && <ErrorMessage />}
-      {imeges.length > 0 && (
-        <ImegeGallery items={imeges} openModal={openModal} />
+      {images.length > 0 && (
+        <ImageGallery items={images} openModal={openModal} />
       )}
       {isLoading && <Loader />}
-      {imeges.length > 0 && !isLoading && (
+      {images.length > 0 && !isLoading && (
         <LoadMoreBtn handleLoadMore={handleLoadMore} />
       )}
       {selectedImage && (
